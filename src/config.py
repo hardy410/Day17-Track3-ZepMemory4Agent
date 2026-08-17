@@ -20,7 +20,7 @@ class Settings:
     zep_poll_timeout: int = int(os.getenv("ZEP_POLL_TIMEOUT", "240"))
     zep_poll_interval: float = float(os.getenv("ZEP_POLL_INTERVAL", "5"))
 
-    # LLM used only for the UI chat reply (never for benchmark scoring).
+    # LLM used by the memory router and, optionally, by the UI answer step.
     gemini_api_key: str = os.getenv("GEMINI_API_KEY", "") or os.getenv("GOOGLE_API_KEY", "")
     gemini_model: str = os.getenv("GEMINI_MODEL", "gemini-2.5-flash-lite")
 

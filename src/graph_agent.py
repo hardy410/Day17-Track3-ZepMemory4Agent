@@ -5,7 +5,7 @@ from typing import Any, TypedDict
 from langgraph.graph import END, START, StateGraph
 
 from .config import settings
-from .router import route_query
+from .router import route_with_llm
 from .short_term import ShortTermMemory
 
 
@@ -15,6 +15,7 @@ class MemoryState(TypedDict, total=False):
     query: str
     recent_messages: list[dict[str, str]]
     route: list[str]
+    route_decision: dict[str, Any]
     layers: dict[str, str]
     merged_context: str
     budget: dict[str, dict[str, int]]
@@ -22,7 +23,8 @@ class MemoryState(TypedDict, total=False):
 
 def build_memory_graph(memory_impl: Any):
     def route_node(state: MemoryState) -> dict[str, Any]:
-        return {"route": route_query(state["query"])}
+        decision = route_with_llm(state["query"])
+        return {"route": decision.layers, "route_decision": decision.to_dict()}
 
     def retrieve_node(state: MemoryState) -> dict[str, Any]:
         layers = {"short_term": "", "long_term": "", "episodic": "", "semantic": ""}
